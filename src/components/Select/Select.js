@@ -1,19 +1,32 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled from "styled-components/macro";
 
-import { COLORS, WEIGHTS } from '../../constants';
-import Icon from '../Icon';
+import { COLORS, WEIGHTS } from "../../constants";
+import Icon from "../Icon";
 
-const Select = ({ label, value, children, ...delegated }) => {
+const DISPLAY_LABEL_STYLES = {
+  top: {
+    "--display": "flex",
+  },
+  left: {
+    "--display": "block",
+  },
+};
+
+const Select = ({
+  labelPosition = "top",
+  label,
+  value,
+  children,
+  ...delegated
+}) => {
   const childArray = React.Children.toArray(children);
-  const selectedChild = childArray.find(
-    (child) => child.props.value === value
-  );
+  const selectedChild = childArray.find((child) => child.props.value === value);
 
   const displayedValue = selectedChild.props.children;
 
   return (
-    <Wrapper>
+    <Wrapper style={DISPLAY_LABEL_STYLES[labelPosition]}>
       <VisibleLabel>{label}</VisibleLabel>
 
       <SelectWrapper>
@@ -21,22 +34,21 @@ const Select = ({ label, value, children, ...delegated }) => {
 
         <DisplayedBit>
           {displayedValue}
-          <ChevronIcon
-            id="chevron-down"
-            size={24}
-            strokeWidth={1.5}
-          />
+          <ChevronIcon id="chevron-down" size={24} strokeWidth={1.5} />
         </DisplayedBit>
       </SelectWrapper>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.label``;
+const Wrapper = styled.label`
+  display: var(--display);
+`;
 
 const VisibleLabel = styled.span`
   color: ${COLORS.gray[700]};
   margin-right: 16px;
+  align-self: center;
 `;
 
 const SelectWrapper = styled.div`

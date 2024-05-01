@@ -1,9 +1,33 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from "react";
+import styled from "styled-components/macro";
 
-import { COLORS, WEIGHTS } from '../../constants';
-import { formatPrice, pluralize, isNewShoe } from '../../utils';
-import Spacer from '../Spacer';
+import { COLORS, WEIGHTS } from "../../constants";
+import { formatPrice, pluralize, isNewShoe } from "../../utils";
+import Spacer from "../Spacer";
+
+const ON_SALES = "on-sale";
+const NEW_RELEASE = "new-release";
+const DEFAULT = "default";
+
+const PRICE_STYLES = {
+  "on-sale": {
+    "--color": COLORS.gray[700],
+    "--text-decoration": "line-through",
+  },
+  default: {
+    "--color": "inherit",
+    "--text-decoration": "revert",
+  },
+};
+
+const FLAG_STYLES = {
+  "on-sale": {
+    "--color": COLORS.primary,
+  },
+  "new-release": {
+    "--color": COLORS.secondary,
+  },
+};
 
 const ShoeCard = ({
   slug,
@@ -25,46 +49,80 @@ const ShoeCard = ({
   // both on-sale and new-release, but in this case, `on-sale`
   // will triumph and be the variant used.
   // prettier-ignore
-  const variant = typeof salePrice === 'number'
-    ? 'on-sale'
-    : isNewShoe(releaseDate)
-      ? 'new-release'
-      : 'default'
+  const variant =
+    typeof salePrice === "number"
+      ? ON_SALES
+        : isNewShoe(releaseDate)
+        ? NEW_RELEASE
+        : DEFAULT;
+
+  const priceVariant = typeof salePrice === "number" ? ON_SALES : DEFAULT;
 
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
+        {[ON_SALES, NEW_RELEASE].includes(variant) && (
+          <Flag style={FLAG_STYLES[variant]}>
+            {variant === ON_SALES ? "Sale" : "Just Released!"}
+          </Flag>
+        )}
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price style={PRICE_STYLES[priceVariant]}>{formatPrice(price)}</Price>
         </Row>
         <Row>
-          <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <ColorInfo>{pluralize("Color", numOfColors)}</ColorInfo>
+          {variant === "on-sale" && (
+            <SalePrice>{formatPrice(salePrice)}</SalePrice>
+          )}
         </Row>
       </Wrapper>
     </Link>
   );
 };
 
+const Flag = styled.div`
+  position: absolute;
+  top: 12px;
+  right: -2px;
+  background-color: var(--color);
+  z-index: 1;
+  color: ${COLORS.white};
+  padding: 8px;
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: 14px;
+`;
+
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
+  flex: 1 1 370px;
+  max-width: 600px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+`;
 
 const ImageWrapper = styled.div`
   position: relative;
 `;
 
-const Image = styled.img``;
+const Image = styled.img`
+  width: 100%;
+`;
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Name = styled.h3`
@@ -72,7 +130,10 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  color: var(--color);
+  text-decoration: var(--text-decoration);
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
