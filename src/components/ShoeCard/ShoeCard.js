@@ -20,15 +20,6 @@ const PRICE_STYLES = {
   },
 };
 
-const FLAG_STYLES = {
-  "on-sale": {
-    "--color": COLORS.primary,
-  },
-  "new-release": {
-    "--color": COLORS.secondary,
-  },
-};
-
 const ShoeCard = ({
   slug,
   name,
@@ -61,11 +52,8 @@ const ShoeCard = ({
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
-        {[ON_SALES, NEW_RELEASE].includes(variant) && (
-          <Flag style={FLAG_STYLES[variant]}>
-            {variant === ON_SALES ? "Sale" : "Just Released!"}
-          </Flag>
-        )}
+        {variant === ON_SALES && <SaleFlag>Sale</SaleFlag>}
+        {variant === NEW_RELEASE && <NewFlag>Just Released!</NewFlag>}
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
@@ -88,21 +76,28 @@ const ShoeCard = ({
 const Flag = styled.div`
   position: absolute;
   top: 12px;
-  right: -2px;
-  background-color: var(--color);
+  right: -4px;
   z-index: 1;
   color: ${COLORS.white};
-  padding: 8px;
+  padding: 0px 10px;
   border-radius: 2px;
-  font-weight: 700;
-  font-size: 14px;
+  height: 32px;
+  line-height: 32px;
+  font-weight: ${WEIGHTS.bold};
+  font-size: ${14 / 16}rem;
+`;
+
+const SaleFlag = styled(Flag)`
+  background-color: ${COLORS.primary};
+`;
+
+const NewFlag = styled(Flag)`
+  background-color: ${COLORS.secondary};
 `;
 
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
-  flex: 1 1 370px;
-  max-width: 600px;
 `;
 
 const Wrapper = styled.article`

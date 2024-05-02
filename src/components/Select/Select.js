@@ -43,12 +43,12 @@ const Select = ({
 
 const Wrapper = styled.label`
   display: var(--display);
+  align-items: baseline;
 `;
 
 const VisibleLabel = styled.span`
   color: ${COLORS.gray[700]};
   margin-right: 16px;
-  align-self: center;
 `;
 
 const SelectWrapper = styled.div`
